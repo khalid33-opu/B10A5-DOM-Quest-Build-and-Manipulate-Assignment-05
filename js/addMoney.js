@@ -1,0 +1,92 @@
+/* common function for add donation */
+function getValueById(inputId) {
+    return parseFloat(document.getElementById(inputId).value);
+}
+function getInnerTextById(elementId) {
+    return parseFloat(document.getElementById(elementId).innerText);
+}
+
+
+function addDonation(clickBtn, inputDonation, totalDonationId, donationAreaNameId) {
+    document.getElementById(clickBtn)
+        .addEventListener('click', function () {
+            const inputDonationAmount = getValueById(inputDonation)
+            const totalDonationAmount = getInnerTextById(totalDonationId)
+            const mainBalanceAmount = getInnerTextById("main-balance")
+            if (inputDonationAmount > mainBalanceAmount) {
+                alert('insufficient balance')
+                return
+            }
+            if (isNaN(inputDonationAmount) || inputDonationAmount <= 0) {
+                alert('Invalid Input')
+                return
+            }
+            const totalDonation = totalDonationAmount + inputDonationAmount;
+            const mainBalance = mainBalanceAmount - inputDonationAmount;
+
+            document.getElementById(totalDonationId).innerText = totalDonation.toFixed(2);
+            document.getElementById("main-balance").innerText = mainBalance.toFixed(2);
+
+
+            /** for history secion */
+            const donationAreaName = document.getElementById(donationAreaNameId).innerText
+            const historyItem = document.createElement("div");
+            const historyContainer = document.getElementById("history-container")
+            historyItem.classList.add("border", "p-8", "rounded-2xl");
+
+            historyItem.innerHTML = `
+                <h2 class="font-bold text-xl my-2">${inputDonationAmount} Taka is Donated for ${donationAreaName}</h2>
+                <p class="text-gray-500">Date: ${new Date()}</p>
+            `
+
+
+            document.getElementById("history-container").insertBefore(historyItem, historyContainer.firstChild)
+        })
+}
+
+/** Noakhali section * */
+addDonation("btn-noakhali", "donation-noakhali", "total-donation-noakhali", "area-noakhali")
+
+/**feni section */
+
+addDonation("btn-feni", "donation-feni", "total-donation-feni", "area-feni")
+
+/**quota movement section  */
+
+addDonation("btn-quota", "donation-quota", "total-donation-qouta", "area-quota")
+
+
+/* toggle history-tab */
+const historyTab = document.getElementById('history-tab')
+const donationTab = document.getElementById('donation-tab')
+
+historyTab.addEventListener('click', function () {
+    historyTab.classList.add('bg-primary_btn');
+    donationTab.classList.remove('bg-primary_btn');
+    document.getElementById("history-container").classList.remove('hidden')
+    document.getElementById("donation-main").classList.add('hidden')
+})
+
+
+
+/* toggle donation tab */
+donationTab.addEventListener('click', function () {
+    donationTab.classList.add('bg-primary_btn')
+    historyTab.classList.remove('bg-primary_btn')
+    document.getElementById("history-container").classList.add('hidden')
+    document.getElementById("donation-main").classList.remove('hidden')
+})
+
+
+function modalShow(button, donationFieldINput) {
+    document.getElementById(button).addEventListener('click', function () {
+        const donationInput = getValueById(donationFieldINput)
+        const mainBalance = getInnerTextById('main-balance')
+        if (isNaN(donationInput) === false && donationInput > 0 && donationInput < mainBalance) {
+            return my_modal.showModal();
+        }
+    })
+}
+modalShow("btn-noakhali", "donation-noakhali")
+modalShow("btn-feni", "donation-feni")
+modalShow("btn-quota", "donation-quota")
